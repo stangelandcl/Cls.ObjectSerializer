@@ -12,7 +12,13 @@ namespace ObjectSerializer
 	{
 		public EnumerableSerializer(Serializers s, Type type)
 			: base(s) {
-			var elementType = type.GetGenericArguments () [0];
+			Type elementType;
+			if (type.GetInterfaces ().Any (n => n.IsGenericType &&
+				n.GetGenericTypeDefinition () == typeof(IDictionary<,>))) {
+				elementType = typeof(KeyValuePair<,>).MakeGenericType (type.GetGenericArguments ());
+			} else {
+				elementType = type.GetGenericArguments () [0];
+			}
 			this.ser = serializer.FromDeclared (elementType);
 			this.count = typeof(Enumerable).Method (new[] { elementType }, "Count", Flags.StaticPublic)
 				.DelegateForCallMethod ();
