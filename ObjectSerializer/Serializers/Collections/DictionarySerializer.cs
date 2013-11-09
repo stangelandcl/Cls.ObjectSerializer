@@ -1,3 +1,4 @@
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,20 +9,24 @@ using System.Collections;
 
 namespace ObjectSerializer
 {
-	class EnumerableSerializer: ISerializer
+	class DictionarySerializer: ISerializer
 	{
-		public EnumerableSerializer(Serializers serializer, Type type)
+		public DictionarySerializer(Serializers serializer, Type type)
 		{
-			var elementType = type.GetGenericArguments () [0];
+			var elementType = typeof(KeyValuePair<,>).MakeGenericType (type.GetGenericArguments ());			
 			this.ser = serializer.FromDeclared (elementType);
 			this.count = type.DelegateForGetPropertyValue ("Count");			
-			this.add = type.DelegateForCallMethod ("Add", elementType);
+			this.add = type.DelegateForSetIndexer (elementType.GetGenericArguments ());
 			this.newObj = type.DelegateForCreateInstance ();
+			this.key = elementType.DelegateForGetPropertyValue ("Key");
+			this.value = elementType.DelegateForGetPropertyValue ("Value");
 		}
 		ISerializer ser;
 		MethodInvoker add;
 		ConstructorInvoker newObj;
 		MemberGetter count;
+		MemberGetter key;
+		MemberGetter value;
 
 		public void Serialize(System.IO.Stream stream, object item)
 		{
@@ -35,8 +40,10 @@ namespace ObjectSerializer
 		{
 			var obj = newObj ();
 			var count = ZigZag.DeserializeUInt32 (stream);
-			while (count-- != 0)
-				add(obj, ser.Deserialize (stream));
+			while (count-- != 0) {
+				var x = ser.Deserialize (stream).WrapIfValueType ();
+				add (obj, key(x), value(x));
+			}
 			return obj;
 		}			
 	}

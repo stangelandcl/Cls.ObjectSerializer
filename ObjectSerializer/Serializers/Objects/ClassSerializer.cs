@@ -31,8 +31,10 @@ namespace ObjectSerializer
 		public object Deserialize (System.IO.Stream stream)
 		{
 			var obj = type.CreateInstance ();
-			for (int i=0; i<setters.Length; i++)
-				setters [i](obj, serializers [i].Deserialize (stream));
+			for (int i=0; i<setters.Length; i++) {
+				var s = serializers [i].Deserialize (stream);
+				setters [i] (obj, s);
+			}
 			return obj;
 		}
 		#endregion

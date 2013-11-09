@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections;
+using Fasterflect;
 
 namespace ObjectSerializer
 {
@@ -67,8 +68,11 @@ namespace ObjectSerializer
 				return s;
 			if (t.IsArray)
 				return serializers [t] = new ArraySerializer (this, t);
-			if(IsGenericEnumerable(t))
-				return serializers[t] = new EnumerableSerializer(this, t);
+			if (IsGenericEnumerable (t)) {
+				if (t.GetGenericTypeDefinition () == typeof(Dictionary<,>))
+					return serializers [t] = new DictionarySerializer (this, t);
+				return serializers [t] = new EnumerableSerializer (this, t);
+			}
 			if (!t.IsValueType)
 				return serializers [t] = new ClassSerializer (this, t);
 			if (t.IsGenericType && typeof(KeyValuePair<,>) == t.GetGenericTypeDefinition ())
