@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjectSerializer", "ObjectSerializer\ObjectSerializer.csproj", "{BB86B094-5E90-4084-8038-321CCBC76BFE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSerializer", "TestSerializer\TestSerializer.csproj", "{C66EFAAD-E211-4528-A69C-06E4261104B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Debug|x86.ActiveCfg = Debug|x86
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Debug|x86.Build.0 = Debug|x86
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Release|x86.ActiveCfg = Release|x86
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Release|x86.Build.0 = Release|x86
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Debug|x86.ActiveCfg = Debug|x86
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Debug|x86.Build.0 = Debug|x86
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Release|x86.ActiveCfg = Release|x86
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = TestSerializer\TestSerializer.csproj
+	EndGlobalSection
+EndGlobal
