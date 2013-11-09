@@ -16,7 +16,7 @@ namespace ObjectSerializer
 		public void Serialize (System.IO.Stream stream, object item)
 		{
 			if (item == null) {
-				ZigZag.Serialize (stream, (uint)1);
+				ZigZag.Serialize (stream, 1U);
 				return;
 			}
 			var id = map.ToUInt32 (item.GetType ()) << 1;
@@ -27,7 +27,7 @@ namespace ObjectSerializer
 		{
 			var id = ZigZag.DeserializeUInt32 (stream);
 			if ((id & 1) != 0) return null;
-			var type = map.GetType(id>>1);
+			var type = map.GetType (id >> 1);
 			return serializer.Get(type).Deserialize(stream);
 		}
 		#endregion

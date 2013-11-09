@@ -12,8 +12,7 @@ namespace ObjectSerializer
 		TypeMap types = new TypeMap();
 		Dictionary<Type, ISerializer> serializers = new Dictionary<Type, ISerializer> ();
 
-		public ISerializer Tagged {get; private set;}
-		//		public ISerializer Untagged { get; private set; }
+		public UnknownTypeSerializer Tagged { get; private set; }
 
 		Serializers Add<T>(ISerializer s){
 			serializers.Add (typeof(T), s);
@@ -40,20 +39,6 @@ namespace ObjectSerializer
 			.Add<DateTime> (new DateTimeSerializer ());
 
 			Tagged = new UnknownTypeSerializer(this, types);
-			//Untagged = new ClassSerializer (this, types);
-#if EXPR
-			serializers.Add(new KeyValuePair<Type, ISerializer>(
-				typeof(Expression), (ISerializer)new ExprSerializer(this)));
-#endif
-//			serializers.Add(new KeyValuePair<Type, ISerializer>(
-//				typeof(object), NamedTypeSerializer));		
-#if EXPR
-			serializers.Add(new KeyValuePair<Type, ISerializer>(
-				(Type)null, (ISerializer)new JsonSerializer()));
-#endif
-
-//			serializerMap = serializers.Take(serializers.Count()-1)
-//				.ToDictionary(n=>n.Key, n=>n.Value);
 		}
 
 		public ISerializer FromDeclared(Type t){
@@ -63,19 +48,25 @@ namespace ObjectSerializer
 		}
 
 		public ISerializer Get(Type t){
+			lock (serializers) 
+				return GetInternal (t);		
+		}
+
+		ISerializer GetInternal (Type t)
+		{
 			ISerializer s;
-			if(serializers.TryGetValue(t, out s))
+			if (serializers.TryGetValue (t, out s))
 				return s;
 			if (t.IsArray)
 				return serializers [t] = new ArraySerializer (this, t);
 			if (IsGenericEnumerable (t)) {
-				if (t.GetGenericTypeDefinition () == typeof(Dictionary<,>))
+				if (t.GetGenericTypeDefinition () == typeof(Dictionary<, >))
 					return serializers [t] = new DictionarySerializer (this, t);
 				return serializers [t] = new EnumerableSerializer (this, t);
 			}
 			if (!t.IsValueType)
 				return serializers [t] = new ClassSerializer (this, t);
-			if (t.IsGenericType && typeof(KeyValuePair<,>) == t.GetGenericTypeDefinition ())
+			if (t.IsGenericType && typeof(KeyValuePair<, >) == t.GetGenericTypeDefinition ())
 				return serializers [t] = new KeyValuePairSerializer (this, t);
 			return serializers [t] = new StructSerializer (this, t);
 		}
