@@ -19,6 +19,9 @@ namespace ObjectSerializer
 		public T2 Get(T1 a, Func<T1, T2> get){
 			var b = Get(a);
 			if(b.HasValue) return b.Value;
+			var x = get (a);
+			lock (m2)
+				m2 [x] = a;
 			lock(m1)
 				return m1[a] = get(a);
 		}
@@ -26,8 +29,11 @@ namespace ObjectSerializer
 		public T1 Get(T2 a, Func<T2, T1> get){
 			var b = Get(a);
 			if(b.HasValue) return b.Value;
-			lock(m2)
-				return m2[a] = get(a);
+			var x = get (a);
+			lock (m1)
+				m1 [x] = a;
+			lock (m2)
+				return m2 [a] = x;
 		}
 
 		public Option<T2> Get(T1 a){

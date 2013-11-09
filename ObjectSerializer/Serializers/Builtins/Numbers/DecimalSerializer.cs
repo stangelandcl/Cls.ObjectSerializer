@@ -3,19 +3,17 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class DecimalSerializer : SpecificSerializer<decimal>
+	public class DecimalSerializer : ISerializer
 	{
-		public DecimalSerializer(Serializers s)
-			: base(s){}
-		protected override void Serialize (System.IO.Stream stream, decimal item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
 			var w = new BinaryWriter(stream);
-			w.Write(item);
+			w.Write((decimal)item);
 			w.Flush();
 		}
-		protected override decimal Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader(stream).ReadSByte();
+			return new BinaryReader(stream).ReadDecimal();
 		}
 	}
 }

@@ -3,26 +3,17 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class Int32Serializer : SpecificSerializer<int>
+	public class Int32Serializer : ISerializer
 	{
-		public Int32Serializer(Serializers s)
-		: base(s){}
-
-		#region ISerializer implementation
-
-		protected override void Serialize (System.IO.Stream stream, int item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			ZigZag.Serialize (stream, item);
+			ZigZag.Serialize (stream, (int)item);
 		}
 
-		protected override int Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			return ZigZag.DeserializeInt32 (stream);
 		}
-
-		#endregion
-
-
 	}
 }
 

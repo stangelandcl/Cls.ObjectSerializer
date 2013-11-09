@@ -5,11 +5,12 @@ using Fasterflect;
 
 namespace ObjectSerializer
 {
-	public class KeyValuePairSerializer : SpecificSerializer<object>
+	public class KeyValuePairSerializer : ISerializer
 	{
-		public KeyValuePairSerializer(Serializers s, Type type) : base(s){
-			getKey = type.GetProperty ("Key").DelegateForGetPropertyValue ();
-			getValue = type.GetProperty ("Value").DelegateForGetPropertyValue ();
+		public KeyValuePairSerializer(Serializers s, Type type) 
+		{
+			getKey = type.DelegateForGetPropertyValue ("Key");
+			getValue = type.DelegateForGetPropertyValue ("Value");
 			key = s.FromDeclared (type.GetGenericArguments()[0]);
 			value = s.FromDeclared (type.GetGenericArguments()[1]);
 		}
@@ -18,11 +19,12 @@ namespace ObjectSerializer
 		ConstructorInvoker newObj;
 		ISerializer key;
 		ISerializer value;
-		protected override void Serialize (System.IO.Stream stream, object item)	{
-			key.Serialize (stream, getKey(item));
-			value.Serialize (stream, getValue(item));
+		public void Serialize (System.IO.Stream stream, object item)	{
+			var x = item.WrapIfValueType ();
+			key.Serialize (stream, getKey(x));
+			value.Serialize (stream, getValue(x));
 		}
-		protected override object Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			var k = key.Deserialize (stream);
 			var v = value.Deserialize (stream);

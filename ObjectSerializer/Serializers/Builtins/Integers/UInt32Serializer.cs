@@ -3,15 +3,13 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class UInt32Serializer : SpecificSerializer<uint>
+	public class UInt32Serializer : ISerializer
 	{
-		public UInt32Serializer(Serializers s)
-			: base(s){}
-		protected override void Serialize (System.IO.Stream stream, uint item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			ZigZag.Serialize (stream, item);
+			ZigZag.Serialize (stream, (uint)item);
 		}
-		protected override uint Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			return ZigZag.DeserializeUInt32 (stream);
 		}

@@ -3,15 +3,13 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class UInt64Serializer : SpecificSerializer<ulong>
+	public class UInt64Serializer : ISerializer
 	{
-		public UInt64Serializer(Serializers s)
-			: base(s){}
-		protected override void Serialize (System.IO.Stream stream, ulong item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			ZigZag.Serialize (stream, item);
+			ZigZag.Serialize (stream, (ulong)item);
 		}
-		protected override ulong Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			return ZigZag.DeserializeUInt64 (stream);
 		}

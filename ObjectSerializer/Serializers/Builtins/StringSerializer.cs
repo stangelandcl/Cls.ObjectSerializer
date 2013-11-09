@@ -1,23 +1,35 @@
 using System;
 using System.IO;
+using System.Text;
 
 namespace ObjectSerializer
 {
-	public class StringSerializer : SpecificSerializer<string>
+	public class StringSerializer : ISerializer
 	{
-		public StringSerializer(Serializers s)
-		: base(s){}
-		protected override void Serialize(System.IO.Stream stream, string item)
+		public void Serialize(System.IO.Stream stream, object item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item);		
-			w.Flush();
+			if (item == null) {
+				ZigZag.Serialize (stream, 1);
+				return;
+			}
+			var str = (string)item;
+			ZigZag.Serialize (stream, (long)str.Length << 1);
+			var bytes = Encoding.UTF8.GetBytes (str);
+			stream.Write (bytes, 0, bytes.Length);
 		}
 
-		protected override string Deserialize(System.IO.Stream stream)
+		public object Deserialize(System.IO.Stream stream)
 		{
-			var r = new BinaryReader(stream);
-			return r.ReadString();
+			long count = ZigZag.DeserializeInt64 (stream);
+			if(count == 1) return null;
+			var c = (int)(count >> 1);
+			var bytes = new byte[c];
+			int offset = 0;
+			do {
+				int read = stream.Read (bytes, offset, bytes.Length - offset);
+				offset += read;
+			} while(offset != bytes.Length);
+			return Encoding.UTF8.GetString(bytes);
 		}
 	}
 }

@@ -5,31 +5,34 @@ using System.Linq;
 
 namespace ObjectSerializer
 {
-	public class ClassSerializer : SpecificSerializer<object> 
+	public class ClassSerializer : ISerializer
 	{
 		public ClassSerializer (Serializers serializer, Type type)
-			: base(serializer)  { 
+		{ 
 			this.type = type;
-			this.properties = type.Properties (Flags.InstancePublic)
+			var properties = type.Properties (Flags.InstancePublic)
 				.Where (n => n.CanRead && n.CanWrite)
 				.ToArray ();
+			this.getters = properties.Select (n => n.DelegateForGetPropertyValue ()).ToArray ();
+			this.setters = properties.Select (n => n.DelegateForSetPropertyValue ()).ToArray ();
 			this.serializers = properties.Select (n => serializer.FromDeclared (n.PropertyType)).ToArray ();
 		}
 		Type type;
-		PropertyInfo[] properties;
+		MemberGetter[] getters;
+		MemberSetter[] setters;
 		ISerializer[] serializers;
 
 		#region implemented abstract members of SpecificSerializer
-		protected override void Serialize (System.IO.Stream stream, object item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			for (int i=0; i<properties.Length; i++)
-				serializers [i].Serialize (stream, properties[i].GetValue(item, null));
+			for (int i=0; i<getters.Length; i++)
+				serializers [i].Serialize (stream, getters[i](item));
 		}
-		protected override object Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			var obj = type.CreateInstance ();
-			for (int i=0; i<properties.Length; i++)
-				properties [i].Set (obj, serializers [i].Deserialize (stream));
+			for (int i=0; i<setters.Length; i++)
+				setters [i](obj, serializers [i].Deserialize (stream));
 			return obj;
 		}
 		#endregion

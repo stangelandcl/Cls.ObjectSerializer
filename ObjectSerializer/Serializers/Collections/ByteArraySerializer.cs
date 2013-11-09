@@ -6,24 +6,31 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-    class ByteArraySerializer : SpecificSerializer<byte[]>
+    class ByteArraySerializer : ISerializer
     {
-		public ByteArraySerializer(Serializers s)
-		: base(s) {}
-
-        protected override void Serialize(System.IO.Stream stream, byte[] item)
+        public void Serialize(System.IO.Stream stream, object item)
         {
-            var w = new BinaryWriter(stream);
-            w.Write(item.Length);
-            w.Write(item, 0, item.Length);
-            w.Flush();
+			if (item == null) {
+				ZigZag.Serialize (stream, 1);
+				return;
+			}
+			var array = (byte[])item;
+			ZigZag.Serialize (stream, (long)array.Length << 1);
+			stream.Write (array, 0, array.Length);           
         }
 
-        protected override byte[] Deserialize(System.IO.Stream stream)
+        public object Deserialize(System.IO.Stream stream)
         {
-            var r = new BinaryReader(stream);
-            int count = r.ReadInt32();
-            return r.ReadBytes(count);
+			long count = ZigZag.DeserializeInt64 (stream);
+			if(count == 1) return null;
+			int c = (int)(count >> 1);
+			var bytes = new byte[c];
+			int offset = 0;
+			do {
+				int read = stream.Read (bytes, offset, bytes.Length - offset);
+				offset += read;
+			} while(offset != bytes.Length);
+			return bytes;
         }			
    	}
 }

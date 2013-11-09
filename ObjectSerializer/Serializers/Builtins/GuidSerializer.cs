@@ -3,15 +3,13 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class GuidSerializer : SpecificSerializer<Guid>
+	public class GuidSerializer : ISerializer
 	{
-		public GuidSerializer(Serializers s) : base(s){}
-		protected override void Serialize (System.IO.Stream stream, Guid item)	{
-			var w = new BinaryWriter(stream);
-			w.Write (item.ToByteArray ());
-			w.Flush();
+		public void Serialize (System.IO.Stream stream, object item)	{
+			var bytes = ((Guid)item).ToByteArray ();
+			stream.Write (bytes, 0, bytes.Length);
 		}
-		protected override Guid Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			return new Guid (new BinaryReader (stream).ReadBytes (16));
 		}

@@ -8,10 +8,10 @@ using System.Collections;
 
 namespace ObjectSerializer
 {
-	class EnumerableSerializer: SpecificSerializer<object>
+	class EnumerableSerializer: ISerializer
 	{
-		public EnumerableSerializer(Serializers s, Type type)
-			: base(s) {
+		public EnumerableSerializer(Serializers serializer, Type type)
+			 {
 			Type elementType;
 			if (type.GetInterfaces ().Any (n => n.IsGenericType &&
 				n.GetGenericTypeDefinition () == typeof(IDictionary<,>))) {
@@ -20,8 +20,7 @@ namespace ObjectSerializer
 				elementType = type.GetGenericArguments () [0];
 			}
 			this.ser = serializer.FromDeclared (elementType);
-			this.count = typeof(Enumerable).Method (new[] { elementType }, "Count", Flags.StaticPublic)
-				.DelegateForCallMethod ();
+			this.count = type.DelegateForGetPropertyValue ("Count");
 			var add = type.Method ("Add", new[] { elementType }) ?? type.Method ("Add");
 			this.add = add.DelegateForCallMethod ();
 			this.newObj = type.DelegateForCreateInstance ();
@@ -29,17 +28,17 @@ namespace ObjectSerializer
 		ISerializer ser;
 		MethodInvoker add;
 		ConstructorInvoker newObj;
-		MethodInvoker count;
+		MemberGetter count;
 
-		protected override void Serialize(System.IO.Stream stream, object item)
+		public void Serialize(System.IO.Stream stream, object item)
 		{
-			int count = Enumerable.Count ((dynamic)item);//(int)this.count.Invoke (null, item);
+			int count = (int)this.count (item);//(int)this.count.Invoke (null, item);
 			ZigZag.Serialize (stream, (uint)count);
 			foreach (var i in (IEnumerable)item)
-				ser.Serialize (i);
+				ser.Serialize (stream, i);
 		}
 
-		protected override object Deserialize(System.IO.Stream stream)
+		public object Deserialize(System.IO.Stream stream)
 		{
 			var obj = newObj ();
 			var count = ZigZag.DeserializeUInt32 (stream);

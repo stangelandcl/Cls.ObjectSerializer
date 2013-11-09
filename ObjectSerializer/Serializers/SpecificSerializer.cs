@@ -11,19 +11,14 @@ namespace ObjectSerializer
 		}
 		protected Serializers serializer;
 		protected abstract void Serialize(Stream stream, T item);
-		protected abstract T Deserialize(Stream stream);
+		public abstract object Deserialize(Stream stream);
 
 
 		#region ISerializer implementation
 
-		public void Serialize<T2> (System.IO.Stream stream, T2 item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			Serialize(stream, (T)(object)item);
-		}
-
-		public T2 Deserialize<T2> (System.IO.Stream stream)
-		{
-			return (T2)(object)Deserialize(stream);
+			Serialize(stream, (T)item);
 		}
 
 		#endregion

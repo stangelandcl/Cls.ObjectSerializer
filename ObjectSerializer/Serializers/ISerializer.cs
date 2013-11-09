@@ -5,8 +5,8 @@ namespace ObjectSerializer
 {
     public interface ISerializer
 	{
-        void Serialize<T>(Stream stream, T item);
-        T Deserialize<T>(Stream stream);
+        void Serialize(Stream stream, object item);
+        object Deserialize(Stream stream);
 	}
 
 	public interface ISerializer<T>
@@ -34,20 +34,20 @@ namespace ObjectSerializer
         public static T Deserialize<T>(this ISerializer serializer, ref ArraySegment<byte> bytes)
         {
             var ms = new MemoryStream(bytes.Array, bytes.Offset, bytes.Count);
-            return serializer.Deserialize<T>(ms);
+            return (T)serializer.Deserialize(ms);
         }
         public static T Deserialize<T>(this ISerializer serializer, byte[] bytes)
         {
             var ms = new MemoryStream(bytes);
-            return serializer.Deserialize<T>(ms);
+            return (T)serializer.Deserialize(ms);
         }
-        public static object Deserialize(this ISerializer serializer, Stream stream)
-        {
-            return serializer.Deserialize<object>(stream);
-        }
+//        public static object Deserialize(this ISerializer serializer, Stream stream)
+//        {
+//            return serializer.Deserialize<object>(stream);
+//        }
 		public static object Deserialize(this ISerializer serializer, byte[] bytes)
 		{
-			return serializer.Deserialize<object>(new MemoryStream(bytes));
+			return serializer.Deserialize(new MemoryStream(bytes));
 		}
     }
 }

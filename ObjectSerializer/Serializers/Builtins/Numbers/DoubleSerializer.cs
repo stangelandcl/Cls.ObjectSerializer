@@ -3,19 +3,16 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class DoubleSerializer : SpecificSerializer<double>
+	public class DoubleSerializer : ISerializer
 	{
-		public DoubleSerializer(Serializers s)
-			: base(s){}
-		protected override void Serialize (System.IO.Stream stream, double item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item);
-			w.Flush();
+			var l = BitConverter.DoubleToInt64Bits ((double)item);
+			ZigZag.Serialize (stream, l);
 		}
-		protected override double Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader(stream).ReadDouble();
+			return BitConverter.Int64BitsToDouble (ZigZag.DeserializeInt64 (stream));
 		}
 	}
 }

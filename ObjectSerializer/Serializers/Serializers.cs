@@ -14,29 +14,29 @@ namespace ObjectSerializer
 		public ISerializer Tagged {get; private set;}
 		//		public ISerializer Untagged { get; private set; }
 
-		Serializers Add<T>(SpecificSerializer<T> s){
+		Serializers Add<T>(ISerializer s){
 			serializers.Add (typeof(T), s);
 			return this;
 		}
 
 		public Serializers(){
-			Add (new ByteArraySerializer (this))
-			.Add (new StringSerializer (this))
-			.Add (new Int8Serializer (this))
-			.Add (new Int16Serializer (this))
-			.Add (new Int32Serializer (this))
-			.Add (new Int64Serializer (this))
-			.Add (new UInt8Serializer (this))
-			.Add (new UInt16Serializer (this))
-			.Add (new UInt32Serializer (this))
-			.Add (new UInt64Serializer (this))
-			.Add (new FloatSerializer (this))
-			.Add (new DoubleSerializer (this))
-			.Add (new GuidSerializer (this))
-			.Add (new DecimalSerializer (this))
-			.Add (new TimeSpanSerializer (this))
-			.Add (new BoolSerializer (this))
-			.Add (new DateTimeSerializer (this));
+			Add <byte[]>(new ByteArraySerializer ())
+			.Add<string> (new StringSerializer ())
+			.Add <sbyte>(new Int8Serializer ())
+			.Add<short> (new Int16Serializer ())
+			.Add <int>(new Int32Serializer ())
+			.Add<long> (new Int64Serializer ())
+			.Add <byte>(new UInt8Serializer ())
+			.Add<ushort> (new UInt16Serializer ())
+			.Add <uint>(new UInt32Serializer ())
+			.Add <ulong>(new UInt64Serializer ())
+			.Add<float> (new FloatSerializer ())
+			.Add <double>(new DoubleSerializer ())
+			.Add <Guid>(new GuidSerializer ())
+			.Add <decimal>(new DecimalSerializer ())
+			.Add <TimeSpan>(new TimeSpanSerializer ())
+			.Add <bool>(new BoolSerializer ())
+			.Add<DateTime> (new DateTimeSerializer ());
 
 			Tagged = new UnknownTypeSerializer(this, types);
 			//Untagged = new ClassSerializer (this, types);

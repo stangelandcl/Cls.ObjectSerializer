@@ -3,15 +3,15 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class DateTimeSerializer : SpecificSerializer<DateTime>
+	public class DateTimeSerializer : ISerializer
 	{
-		public DateTimeSerializer(Serializers s) : base(s){}
-		protected override void Serialize (System.IO.Stream stream, DateTime item)	{
+		public void Serialize (System.IO.Stream stream, object obj)	{
+			var item = (DateTime)obj;
 			var w = new BinaryWriter(stream);
 			w.Write (item.ToBinary());
 			w.Flush();
 		}
-		protected override DateTime Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			return DateTime.FromBinary (new BinaryReader (stream).ReadInt64 ());
 		}

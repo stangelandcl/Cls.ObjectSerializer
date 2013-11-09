@@ -3,19 +3,18 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class FloatSerializer : SpecificSerializer<float>
+	public unsafe class FloatSerializer : ISerializer
 	{
-		public FloatSerializer(Serializers s)
-			: base(s){}
-		protected override void Serialize (System.IO.Stream stream, float item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item);
-			w.Flush();
+			var f = (float)item;
+			uint* a = (uint*)&f;
+			ZigZag.Serialize (stream, *a);
 		}
-		protected override float Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader(stream).ReadSingle();
+			uint a = ZigZag.DeserializeUInt32 (stream);
+			return *(float*)&a;
 		}
 	}
 }

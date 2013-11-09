@@ -3,17 +3,15 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class BoolSerializer : SpecificSerializer<bool>
+	public class BoolSerializer : ISerializer
 	{
-		public BoolSerializer(Serializers s) : base(s){}
-		protected override void Serialize (System.IO.Stream stream, bool item)	{
-			var w = new BinaryWriter(stream);
-			w.Write (item);
-			w.Flush();
+		public void Serialize (System.IO.Stream stream, object item)	{
+			var b = (bool)item;
+			stream.WriteByte (b ? (byte)1 : (byte)0);
 		}
-		protected override bool Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader (stream).ReadBoolean ();
+			return stream.ReadByte () == 1;
 		}
 	}
 }

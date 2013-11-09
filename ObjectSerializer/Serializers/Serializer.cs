@@ -9,18 +9,14 @@ namespace ObjectSerializer
 	{
 		Serializers s = new Serializers();
 
-		public void Serialize<T>(System.IO.Stream stream, T item)
+		public void Serialize(System.IO.Stream stream, object item)
 		{
 			s.Tagged.Serialize(stream, item);
 		}
 
-		public T Deserialize<T>(System.IO.Stream stream)
+		public object Deserialize(System.IO.Stream stream)
 		{
-			return s.Tagged.Deserialize<T>(stream);
-		}
-
-		public object Deserialize(Stream stream){
-			return s.Tagged.Deserialize (stream);
+			return s.Tagged.Deserialize(stream);
 		}
 	}
 }

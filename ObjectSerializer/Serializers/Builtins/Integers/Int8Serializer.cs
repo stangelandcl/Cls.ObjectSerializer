@@ -3,15 +3,13 @@ using System.IO;
 
 namespace ObjectSerializer
 {
-	public class Int8Serializer : SpecificSerializer<sbyte>
+	public class Int8Serializer : ISerializer
 	{
-		public Int8Serializer(Serializers s)
-		: base(s){}
-		protected override void Serialize (System.IO.Stream stream, sbyte item)
+		public void Serialize (System.IO.Stream stream, object item)
 		{
-			stream.WriteByte ((byte)item);
+			stream.WriteByte ((byte)(sbyte)item);
 		}
-		protected override sbyte Deserialize (System.IO.Stream stream)
+		public object Deserialize (System.IO.Stream stream)
 		{
 			return (sbyte)stream.ReadByte ();
 		}

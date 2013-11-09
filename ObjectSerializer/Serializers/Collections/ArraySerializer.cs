@@ -7,24 +7,25 @@ using System;
 
 namespace ObjectSerializer
 {
-	class ArraySerializer : SpecificSerializer<Array>
+	class ArraySerializer : ISerializer
 	{
-		public ArraySerializer(Serializers s, Type type)
-			: base(s) {
+		public ArraySerializer(Serializers serializer, Type type)
+		{
 			this.ser = serializer.FromDeclared (type.GetElementType());
 			this.type = type;
 		}
 		ISerializer ser;
 		Type type;
 
-		protected override void Serialize(System.IO.Stream stream, Array array)
+		public  void Serialize(System.IO.Stream stream, object  item)
 		{
+			var array = (Array)item;
 			ZigZag.Serialize (stream, (uint)array.Length);
 			foreach (var i in array)
-				ser.Serialize (i);
+				ser.Serialize (stream, i);
 		}
 
-		protected override Array Deserialize(System.IO.Stream stream)
+		public object Deserialize(System.IO.Stream stream)
 		{
 			var count = ZigZag.DeserializeUInt32 (stream);
 			var array = Array.CreateInstance (type.GetElementType (), count);
