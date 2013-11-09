@@ -13,6 +13,7 @@ namespace ObjectSerializer
 			getValue = type.DelegateForGetPropertyValue ("Value");
 			key = s.FromDeclared (type.GetGenericArguments()[0]);
 			value = s.FromDeclared (type.GetGenericArguments()[1]);
+			newObj = type.DelegateForCreateInstance (type.GetGenericArguments ());
 		}
 		MemberGetter getKey;
 		MemberGetter getValue;
@@ -28,7 +29,7 @@ namespace ObjectSerializer
 		{
 			var k = key.Deserialize (stream);
 			var v = value.Deserialize (stream);
-			return newObj.Invoke(k, v);
+			return newObj(k, v);
 		}
 	}
 }

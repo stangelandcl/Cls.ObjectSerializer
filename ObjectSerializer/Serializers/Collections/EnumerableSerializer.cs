@@ -21,7 +21,7 @@ namespace ObjectSerializer
 			}
 			this.ser = serializer.FromDeclared (elementType);
 			this.count = type.DelegateForGetPropertyValue ("Count");
-			var add = type.Method ("Add", new[] { elementType }) ?? type.Method ("Add");
+			var add = type.Method ("Add", new[] { elementType }, Flags.InstanceAnyVisibility);
 			this.add = add.DelegateForCallMethod ();
 			this.newObj = type.DelegateForCreateInstance ();
 		}
@@ -43,7 +43,7 @@ namespace ObjectSerializer
 			var obj = newObj ();
 			var count = ZigZag.DeserializeUInt32 (stream);
 			while (count-- != 0)
-				add.Invoke (obj, ser.Deserialize (stream));
+				add(obj, ser.Deserialize (stream));
 			return obj;
 		}			
 	}
