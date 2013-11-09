@@ -38,6 +38,8 @@
     <Folder Include="Serializers\Builtins\" />
     <Folder Include="Extensions\" />
     <Folder Include="Serializers\Objects\" />
+    <Folder Include="Serializers\Builtins\Integers\" />
+    <Folder Include="Serializers\Builtins\Numbers\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Serializers\ExprSerializer.cs" />
@@ -49,19 +51,7 @@
     <Compile Include="Types\TypeMap.cs" />
     <Compile Include="Types\TwoWayDictionary.cs" />
     <Compile Include="Serializers\Collections\ByteArraySerializer.cs" />
-    <Compile Include="Serializers\Collections\ObjectArraySerializer.cs" />
-    <Compile Include="Serializers\Builtins\Int32Serializer.cs" />
     <Compile Include="Serializers\Builtins\StringSerializer.cs" />
-    <Compile Include="Serializers\Builtins\Int64Serializer.cs" />
-    <Compile Include="Serializers\Builtins\Int16Serializer.cs" />
-    <Compile Include="Serializers\Builtins\Int8Serializer.cs" />
-    <Compile Include="Serializers\Builtins\UInt8Serializer.cs" />
-    <Compile Include="Serializers\Builtins\UInt16Serializer.cs" />
-    <Compile Include="Serializers\Builtins\UInt32Serializer.cs" />
-    <Compile Include="Serializers\Builtins\UInt64Serializer.cs" />
-    <Compile Include="Serializers\Builtins\FloatSerializer.cs" />
-    <Compile Include="Serializers\Builtins\DoubleSerializer.cs" />
-    <Compile Include="Serializers\Builtins\DecimalSerializer.cs" />
     <Compile Include="Serializers\Builtins\GuidSerializer.cs" />
     <Compile Include="Serializers\Builtins\BoolSerializer.cs" />
     <Compile Include="Serializers\Builtins\TimeSpanSerializer.cs" />
@@ -70,14 +60,28 @@
     <Compile Include="Serializers\Builtins\DateTimeSerializer.cs" />
     <Compile Include="Serializers\Builtins\KeyValuePairSerializer.cs" />
     <Compile Include="Serializers\Objects\ClassSerializer.cs" />
-    <Compile Include="Serializers\Objects\TaggedSerializer.cs" />
     <Compile Include="Serializers\Objects\StructSerializer.cs" />
+    <Compile Include="Serializers\Objects\UnknownTypeSerializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\Int16Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\Int32Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\Int64Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\Int8Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\UInt16Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\UInt32Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\UInt64Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Integers\UInt8Serializer.cs" />
+    <Compile Include="Serializers\Builtins\Numbers\FloatSerializer.cs" />
+    <Compile Include="Serializers\Builtins\Numbers\DoubleSerializer.cs" />
+    <Compile Include="Serializers\Builtins\Numbers\DecimalSerializer.cs" />
+    <Compile Include="Types\ZigZag.cs" />
+    <Compile Include="Serializers\Collections\ArraySerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
     <Reference Include="Fasterflect">
       <HintPath>..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

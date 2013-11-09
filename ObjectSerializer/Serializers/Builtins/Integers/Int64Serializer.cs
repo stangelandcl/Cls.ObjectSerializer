@@ -12,14 +12,12 @@ namespace ObjectSerializer
 
 		protected override void Serialize (System.IO.Stream stream, long item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item);
-			w.Flush();
+			ZigZag.Serialize (stream, item);
 		}
 
 		protected override long Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader(stream).ReadInt64();
+			return ZigZag.DeserializeInt64 (stream);
 		}
 
 		#endregion

@@ -9,13 +9,11 @@ namespace ObjectSerializer
 		: base(s){}
 		protected override void Serialize (System.IO.Stream stream, sbyte item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item);
-			w.Flush();
+			stream.WriteByte ((byte)item);
 		}
 		protected override sbyte Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader(stream).ReadSByte();
+			return (sbyte)stream.ReadByte ();
 		}
 	}
 }

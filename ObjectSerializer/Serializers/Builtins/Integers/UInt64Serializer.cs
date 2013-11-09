@@ -9,13 +9,11 @@ namespace ObjectSerializer
 			: base(s){}
 		protected override void Serialize (System.IO.Stream stream, ulong item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item);
-			w.Flush();
+			ZigZag.Serialize (stream, item);
 		}
 		protected override ulong Deserialize (System.IO.Stream stream)
 		{
-			return new BinaryReader(stream).ReadUInt64();
+			return ZigZag.DeserializeUInt64 (stream);
 		}
 	}
 }

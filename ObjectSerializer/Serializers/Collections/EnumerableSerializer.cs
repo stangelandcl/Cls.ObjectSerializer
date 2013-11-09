@@ -2,32 +2,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
-using System.Linq;
+using Fasterflect;
 using System;
+using System.Collections;
 
 namespace ObjectSerializer
 {
-	class EnumerableSerializer<T, U> : SpecificSerializer<T> where T : IEnumerable<U>
+	class EnumerableSerializer: SpecificSerializer<object>
 	{
-		public EnumerableSerializer(Serializers s)
-			: base(s) {}
+		public EnumerableSerializer(Serializers s, Type type)
+			: base(s) {
+			var elementType = type.GetGenericArguments () [0];
+			this.ser = serializer.FromDeclared (elementType);
+			this.count = typeof(Enumerable).Method (new[] { elementType }, "Count", Flags.StaticPublic)
+				.DelegateForCallMethod ();
+			var add = type.Method ("Add", new[] { elementType }) ?? type.Method ("Add");
+			this.add = add.DelegateForCallMethod ();
+			this.newObj = type.DelegateForCreateInstance ();
+		}
+		ISerializer ser;
+		MethodInvoker add;
+		ConstructorInvoker newObj;
+		MethodInvoker count;
 
-		protected override void Serialize(System.IO.Stream stream, T item)
+		protected override void Serialize(System.IO.Stream stream, object item)
 		{
-			var w = new BinaryWriter(stream);
-			w.Write(item.Count());
-			w.Flush ();
-			var s = serializer.Get (typeof(U));
-			foreach (var i in item)
-				s.Serialize (i);
+			int count = Enumerable.Count ((dynamic)item);//(int)this.count.Invoke (null, item);
+			ZigZag.Serialize (stream, (uint)count);
+			foreach (var i in (IEnumerable)item)
+				ser.Serialize (i);
 		}
 
-		protected override T Deserialize(System.IO.Stream stream)
+		protected override object Deserialize(System.IO.Stream stream)
 		{
-			var r = new BinaryReader(stream);
-			int count = r.ReadInt32();
-			var s = serializer.Get (typeof(U));
-			throw new NotImplementedException ();
+			var obj = newObj ();
+			var count = ZigZag.DeserializeUInt32 (stream);
+			while (count-- != 0)
+				add.Invoke (obj, ser.Deserialize (stream));
+			return obj;
 		}			
 	}
 }

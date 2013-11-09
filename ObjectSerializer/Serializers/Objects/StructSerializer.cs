@@ -13,7 +13,7 @@ namespace ObjectSerializer
 			this.properties = type.Properties (Flags.InstancePublic)
 				.Where (n => n.CanRead && n.CanWrite)
 					.ToArray ();
-			this.serializers = properties.Select (n => serializer.Get (n.PropertyType)).ToArray ();
+			this.serializers = properties.Select (n => serializer.FromDeclared (n.PropertyType)).ToArray ();
 		}
 		Type type;
 		PropertyInfo[] properties;
@@ -23,7 +23,7 @@ namespace ObjectSerializer
 		protected override void Serialize (System.IO.Stream stream, object item)
 		{
 			for (int i=0; i<properties.Length; i++)
-				serializers [i].Serialize (stream, properties [i].Get (item));
+				serializers [i].Serialize (stream, properties [i].GetValue (item, null));
 		}
 		protected override object Deserialize (System.IO.Stream stream)
 		{

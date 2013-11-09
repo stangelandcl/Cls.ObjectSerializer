@@ -6,14 +6,18 @@ namespace ObjectSerializer
 {
 	public class TypeMap{
 		TwoWayDictionary<string,Type> map = new TwoWayDictionary<string, Type>();
-		TwoWayDictionary<int, Type> intMap = new TwoWayDictionary<int, Type>();
-		int topId = 1;
+		TwoWayDictionary<uint, Type> intMap = new TwoWayDictionary<uint, Type>();
+		uint topId = 1;
 
-		public int ToInt32(Type type){
+		public static bool RequiresTag(Type t){
+			return !t.IsSealed && !t.IsValueType;
+		}
+
+		public uint ToUInt32(Type type){
 			return intMap.Get (type, n => topId++);
 		}
 
-		public Type GetType(int id){
+		public Type GetType(uint id){
 			return intMap.Get (id).Value;
 		}
 

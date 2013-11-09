@@ -13,7 +13,7 @@ namespace ObjectSerializer
 			this.properties = type.Properties (Flags.InstancePublic)
 				.Where (n => n.CanRead && n.CanWrite)
 				.ToArray ();
-			this.serializers = properties.Select (n => serializer.Get (n.PropertyType)).ToArray ();
+			this.serializers = properties.Select (n => serializer.FromDeclared (n.PropertyType)).ToArray ();
 		}
 		Type type;
 		PropertyInfo[] properties;

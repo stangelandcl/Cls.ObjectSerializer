@@ -7,8 +7,8 @@ namespace ObjectSerializer
 	public class KeyValuePairSerializer<TKey, TValue> : SpecificSerializer<KeyValuePair<TKey, TValue>>
 	{
 		public KeyValuePairSerializer(Serializers s) : base(s){
-			key = s.Get (typeof(TKey));
-			value = s.Get (typeof(TValue));
+			key = s.FromDeclared (typeof(TKey));
+			value = s.FromDeclared (typeof(TValue));
 		}
 		ISerializer key;
 		ISerializer value;
