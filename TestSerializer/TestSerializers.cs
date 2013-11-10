@@ -6,6 +6,8 @@ using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Text;
 using System.Linq.Expressions;
+using System.IO;
+
 
 namespace TestSerializer
 {
@@ -63,11 +65,23 @@ namespace TestSerializer
 				Serializer.Default.Serialize(t);
 			Console.WriteLine (sw.Elapsed + " binary reuse");
 
+			MemoryStream ms;
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++) {
+				ms = new MemoryStream ();
+				ProtoBuf.Serializer.Serialize (ms, t);
+				ms.ToArray ();
+			}
+			Console.WriteLine (sw.Elapsed + " protobuf");
+
 			var b1 = Encoding.UTF8.GetBytes (JsonConvert.SerializeObject (t));
 			var b2 = Serializer.Default.SerializeMessage (t);
 			var b3 = Serializer.Default.Serialize (t);
+			ms = new MemoryStream ();
+			ProtoBuf.Serializer.Serialize (ms, t);
+			var b4 = ms.ToArray ();
 
-			Console.WriteLine ("json={0} message={1} reuse={2}", b1.Length, b2.Length, b3.Length);
+			Console.WriteLine ("json={0} message={1} reuse={2} protobuf={3}", b1.Length, b2.Length, b3.Length, b4.Length);
 
 			sw = Stopwatch.StartNew ();
 			for (int i=0; i<count; i++)
@@ -83,6 +97,11 @@ namespace TestSerializer
 			for (int i=0; i<count; i++)
 				Serializer.Default.Deserialize(b3);
 			Console.WriteLine (sw.Elapsed + " binary reuse");
+
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				ProtoBuf.Serializer.Deserialize<Test5>(new MemoryStream(b4));
+			Console.WriteLine (sw.Elapsed + " protobuf");
 		}
 
 		class Test1{
@@ -118,13 +137,21 @@ namespace TestSerializer
 			public bool YesNo {get;set;}
 		}
 
+		[ProtoBuf.ProtoContract]
 		class Test5{
+			[ProtoBuf.ProtoMember(1)]
 			public string Name {get;set;}
+			[ProtoBuf.ProtoMember(2)]
 			public int Id {get;set;}
+			[ProtoBuf.ProtoMember(3)]
 			public string Prop1 {get;set;}
+			[ProtoBuf.ProtoMember(4)]
 			public string Prop2 {get;set;}
+			[ProtoBuf.ProtoMember(5)]
 			public int Prop3 {get;set;}
+			[ProtoBuf.ProtoMember(6)]
 			public double Prop4 {get;set;}
+			[ProtoBuf.ProtoMember(7)]
 			public Test6 Prop5 {get;set;}
 		}
 		enum Test6 { A,B,C,D,E,F};
