@@ -2,6 +2,9 @@ using System;
 using NUnit.Framework;
 using System.Collections.Generic;
 using ObjectSerializer;
+using System.Diagnostics;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace TestSerializer
 {
@@ -36,6 +39,48 @@ namespace TestSerializer
 			Assert.AreEqual (t.Id, t2.Id);
 			CollectionAssert.AreEqual (t.T2.Items, t2.T2.Items);
 			CollectionAssert.AreEqual (t.T2.Data, t2.T2.Data);
+		}
+
+		[Test]
+		public void TestPerformance(){
+			var t = CreateTestItem ();
+			const int count = 10000;
+			var sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				Encoding.UTF8.GetBytes (JsonConvert.SerializeObject (t));
+			Console.WriteLine (sw.Elapsed + " json");
+
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				Serializer.Default.SerializeMessage (t);
+			Console.WriteLine (sw.Elapsed + " binary message");
+
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				Serializer.Default.Serialize(t);
+			Console.WriteLine (sw.Elapsed + " binary reuse");
+
+			var b1 = Encoding.UTF8.GetBytes (JsonConvert.SerializeObject (t));
+			var b2 = Serializer.Default.SerializeMessage (t);
+			var b3 = Serializer.Default.Serialize (t);
+
+			Console.WriteLine ("json={0} message={1} reuse={2}", b1.Length, b2.Length, b3.Length);
+
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				JsonConvert.DeserializeObject (Encoding.UTF8.GetString (b1));
+			Console.WriteLine (sw.Elapsed + " json");
+
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				Serializer.Default.DeserializeMessage (b2);
+			Console.WriteLine (sw.Elapsed + " binary message");
+
+			sw = Stopwatch.StartNew ();
+			for (int i=0; i<count; i++)
+				Serializer.Default.Deserialize(b3);
+			Console.WriteLine (sw.Elapsed + " binary reuse");
+
 		}
 
 		class Test1{

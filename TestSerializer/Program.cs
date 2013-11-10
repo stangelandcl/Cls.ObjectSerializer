@@ -9,6 +9,7 @@ namespace TestSerializer
 			var test = new TestSerializers ();
 			test.Test ();
 			test.TestMessages ();
+			test.TestPerformance ();
 		}
 	}
 }

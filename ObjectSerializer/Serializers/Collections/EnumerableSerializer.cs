@@ -25,7 +25,7 @@ namespace ObjectSerializer
 
 		public void Serialize(System.IO.Stream stream, object item)
 		{
-			int count = (int)this.count (item);//(int)this.count.Invoke (null, item);
+			int count = (int)this.count (item);
 			ZigZag.Serialize (stream, (uint)count);
 			foreach (var i in (IEnumerable)item)
 				ser.Serialize (stream, i);

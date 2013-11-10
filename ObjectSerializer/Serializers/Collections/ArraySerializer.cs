@@ -12,10 +12,12 @@ namespace ObjectSerializer
 		public ArraySerializer(Serializers serializer, Type type)
 		{
 			this.ser = serializer.FromDeclared (type.GetElementType());
-			this.type = type;
+			this.newObj = type.DelegateForCreateInstance (typeof(int));
+			this.setter = type.DelegateForSetElement();
 		}
 		ISerializer ser;
-		Type type;
+		ArrayElementSetter setter;
+		ConstructorInvoker newObj;
 
 		public void Serialize(System.IO.Stream stream, object  item)
 		{
@@ -27,10 +29,10 @@ namespace ObjectSerializer
 
 		public object Deserialize(System.IO.Stream stream)
 		{
-			var count = ZigZag.DeserializeUInt32 (stream);
-			var array = Array.CreateInstance (type.GetElementType (), count);
+			var count = (int)ZigZag.DeserializeUInt32 (stream);
+			var array = (Array)newObj( count);
 			for (int i=0; i<count; i++)
-				array.SetValue (ser.Deserialize (stream), i);
+				setter (array, i, ser.Deserialize (stream));
 			return array;
 		}			
 	}

@@ -1,3 +1,13 @@
+/ObjectSerializer/bin/Release/Fasterflect.dll
+/ObjectSerializer/bin/Release/ObjectSerializer.dll
+/ObjectSerializer/bin/Release/ObjectSerializer.dll.mdb
+/TestSerializer/bin/Debug/Newtonsoft.Json.dll
+/TestSerializer/bin/Release/Fasterflect.dll
+/TestSerializer/bin/Release/Newtonsoft.Json.dll
+/TestSerializer/bin/Release/ObjectSerializer.dll
+/TestSerializer/bin/Release/TestSerializer.exe
+/TestSerializer/bin/Release/TestSerializer.exe.mdb
+/TestSerializer/bin/Release/nunit.framework.dll
 /ObjectSerializer.userprefs
 /ObjectSerializer/bin/Debug/Fasterflect.dll
 /ObjectSerializer/bin/Debug/ObjectSerializer.dll

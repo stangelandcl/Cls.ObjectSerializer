@@ -16,11 +16,13 @@ namespace ObjectSerializer
 			getters = properties.Select (n => n.DelegateForGetPropertyValue ()).ToArray ();
 			setters = properties.Select (n => n.DelegateForSetPropertyValue ()).ToArray ();
 			this.serializers = properties.Select (n => serializer.FromDeclared (n.PropertyType)).ToArray ();
+			this.newObj = type.DelegateForCreateInstance ();
 		}
 		Type type;
 		MemberGetter[] getters;
 		MemberSetter[] setters;
 		ISerializer[] serializers;
+		ConstructorInvoker newObj;
 
 		#region implemented abstract members of SpecificSerializer
 		public void Serialize (System.IO.Stream stream, object item)
@@ -31,7 +33,7 @@ namespace ObjectSerializer
 		}
 		public object Deserialize (System.IO.Stream stream)
 		{
-			var obj = type.CreateInstance ();
+			var obj = newObj ();
 			var wrap = obj.WrapIfValueType ();
 			for (int i=0; i<setters.Length; i++)
 				setters [i](wrap, serializers [i].Deserialize (stream));
