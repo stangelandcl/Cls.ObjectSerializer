@@ -11,6 +11,10 @@ namespace ObjectSerializer
 
 		public static Serializer Default = new Serializer();
 
+		public void AddSerializer(Func<Serializers, Type, ISerializer> use){
+			serializer.AddSerializer (use);
+		}
+
 		public void Serialize(System.IO.Stream stream, object item)
 		{
 			serializer.Tagged.Serialize(stream, item);

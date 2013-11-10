@@ -60,7 +60,12 @@ namespace ObjectSerializer
 		public TypeMapSerializer TypeMapSerializer {get; private set;}	
 		public TypeMap TypeMap {get; private set;}
 		Dictionary<Type, ISerializer> serializers;
+		SynchronizedCollection<Func<Serializers,Type,ISerializer>> lazy = 
+			new SynchronizedCollection<Func<Serializers, Type, ISerializer>> ();			
 
+		public void AddSerializer(Func<Serializers,Type,ISerializer> newObj){
+			lazy.Add (newObj);
+		}
 
 
 		Serializers Add<T>(ISerializer s){
@@ -85,6 +90,13 @@ namespace ObjectSerializer
 			ISerializer s;
 			if (serializers.TryGetValue (t, out s))
 				return s;
+
+			foreach (var x in lazy) {
+				s = x (this, t);
+				if(s != null) return serializers[t] = s;
+			}
+
+
 			if (t.IsArray)
 				return serializers [t] = new ArraySerializer (this, t);
 			if (IsGenericEnumerable (t)) {
@@ -92,8 +104,11 @@ namespace ObjectSerializer
 					return serializers [t] = new DictionarySerializer (this, t);
 				return serializers [t] = new EnumerableSerializer (this, t);
 			}
-			if (!t.IsValueType)
+			if (!t.IsValueType) {
+				if (typeof(Expression).IsAssignableFrom (t))
+					return serializers [t] = new ExpressionSerializer (this);
 				return serializers [t] = new ClassSerializer (this, t);
+			}
 			if (t.IsGenericType && typeof(KeyValuePair<, >) == t.GetGenericTypeDefinition ())
 				return serializers [t] = new KeyValuePairSerializer (this, t);
 			if(t.IsEnum)

@@ -44,9 +44,7 @@
     <Folder Include="Serializers\Builtins\Numbers\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serializers\ExprSerializer.cs" />
     <Compile Include="Serializers\ISerializer.cs" />
-    <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\Serializer.cs" />
     <Compile Include="Serializers\Serializers.cs" />
     <Compile Include="Types\TypeMap.cs" />
@@ -80,6 +78,7 @@
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Serializers\TypeMapSerializer.cs" />
     <Compile Include="Serializers\Objects\EnumSerializer.cs" />
+    <Compile Include="Serializers\Objects\ExpressionSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
@@ -87,6 +86,10 @@
       <HintPath>..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="Serialize.Linq">
+      <HintPath>..\packages\Serialize.Linq.1.1.4\lib\net40\Serialize.Linq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
