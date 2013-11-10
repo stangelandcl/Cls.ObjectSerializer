@@ -13,6 +13,7 @@ namespace ObjectSerializer
 	{
 		public Serializers(){
 			serializers = new Dictionary<Type, ISerializer> ();
+			TypeMap = new TypeMap ();
 
 			Add <byte[]>(new ByteArraySerializer ())
 			.Add<string> (new StringSerializer ())
@@ -32,52 +33,32 @@ namespace ObjectSerializer
 			.Add <bool>(new BoolSerializer ())
 			.Add<DateTime> (new DateTimeSerializer ());
 
-			Tagged = new UnknownTypeSerializer(this, types);
+			Tagged = new UnknownTypeSerializer(this, TypeMap);
+			TypeMapSerializer = new TypeMapSerializer (TypeMap);
+
 		}
 
-		public Serializers(Dictionary<Type, ISerializer> map){
-			serializers = map;
+		public Serializers(Dictionary<Type, ISerializer> map, TypeMap types){
+			this.serializers = map;
+			this.TypeMap = types;
 			Tagged = new UnknownTypeSerializer(this, types);
+			TypeMapSerializer = new TypeMapSerializer (types);
 		}
 
 		public Serializers CopyNoTags(){
-			return new Serializers(serializers);
+			return new Serializers(serializers, new TypeMap());
 		}
-		public Serializers CopyNewTags(IEnumerable<KeyValuePair<uint,Type>> types){
-			var s = new Serializers(serializers);
-			s.Add (types);
-			return s;
+		public Serializers CopyNewTags(TypeMap types){
+			return new Serializers(serializers, types);
 		}
 		public void Add(IEnumerable<KeyValuePair<uint, Type>> types){
 			foreach (var type in types)
-				this.types.Add (type.Key, type.Value);
+				this.TypeMap.Add (type.Key, type.Value);
 		}
 
 		public UnknownTypeSerializer Tagged { get; private set; }
-
-		public void SerializeTypeMap(Stream stream){
-			var tags = types.TypeTags;
-			ZigZag.Serialize (stream, (uint)tags.Length);
-			foreach (var kvp in tags) {
-				ZigZag.Serialize (stream, kvp.Key);
-				var name = types.ToString (kvp.Value);
-				stream.Write (name);
-			}
-		}
-
-		public KeyValuePair<uint,Type>[] DeserializeTypeMap(Stream stream){
-			int count = (int)ZigZag.DeserializeUInt32 (stream);
-			var types = new KeyValuePair<uint,Type>[count];
-			for(int i=0;i<types.Length;i++) {
-				uint tag = ZigZag.DeserializeUInt32 (stream);
-				var typeName = stream.ReadString ();
-				var type = this.types.GetType (typeName);
-				types [i] = new KeyValuePair<uint, Type> (tag, type);
-			}	
-			return types;
-		}
-
-		TypeMap types = new TypeMap();
+		public TypeMapSerializer TypeMapSerializer {get; private set;}	
+		public TypeMap TypeMap {get; private set;}
 		Dictionary<Type, ISerializer> serializers;
 
 

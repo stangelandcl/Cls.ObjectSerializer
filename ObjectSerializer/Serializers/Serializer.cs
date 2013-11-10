@@ -9,6 +9,8 @@ namespace ObjectSerializer
 	{
 		Serializers serializer = new Serializers();
 
+		public static Serializer Default = new Serializer();
+
 		public void Serialize(System.IO.Stream stream, object item)
 		{
 			serializer.Tagged.Serialize(stream, item);
@@ -24,7 +26,7 @@ namespace ObjectSerializer
 		}
 
 		public object DeserializeMessage(Stream stream){
-			var types = this.serializer.DeserializeTypeMap (stream);
+			var types = (TypeMap)this.serializer.TypeMapSerializer.Deserialize (stream);
 			var serializer = this.serializer.CopyNewTags (types);
 			return serializer.Tagged.Deserialize (stream);
 		}
@@ -33,7 +35,7 @@ namespace ObjectSerializer
 			var serializer = this.serializer.CopyNoTags ();
 			var ms = new MemoryStream ();
 			serializer.Tagged.Serialize (ms, item);
-			serializer.SerializeTypeMap (stream);
+			serializer.TypeMapSerializer.Serialize (stream, serializer.TypeMap);
 			var buf = ms.GetBuffer ();
 			stream.Write (buf, 0, (int)ms.Position);
 		}

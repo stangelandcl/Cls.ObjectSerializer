@@ -13,7 +13,7 @@ namespace TestSerializer
 		{
 			var t = CreateTestItem ();
 
-			var serializer = new Serializer ();
+			var serializer = Serializer.Default;
 			var bytes = serializer.Serialize(t);
 			var t2 = (Test1)serializer.Deserialize (bytes);
 

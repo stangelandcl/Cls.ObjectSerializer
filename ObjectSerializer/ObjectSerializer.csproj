@@ -49,7 +49,6 @@
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Serializers\Serializer.cs" />
     <Compile Include="Serializers\Serializers.cs" />
-    <Compile Include="Serializers\SpecificSerializer.cs" />
     <Compile Include="Types\TypeMap.cs" />
     <Compile Include="Types\TwoWayDictionary.cs" />
     <Compile Include="Serializers\Collections\ByteArraySerializer.cs" />
@@ -79,6 +78,7 @@
     <Compile Include="Serializers\Collections\ArraySerializer.cs" />
     <Compile Include="Serializers\Collections\DictionarySerializer.cs" />
     <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Serializers\TypeMapSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
