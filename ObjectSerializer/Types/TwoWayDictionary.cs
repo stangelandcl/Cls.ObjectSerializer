@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ObjectSerializer
 {
@@ -7,7 +8,13 @@ namespace ObjectSerializer
 	{
 		Dictionary<T1, T2> m1 = new Dictionary<T1, T2>();
 		Dictionary<T2, T1> m2 = new Dictionary<T2, T1>();
-		
+
+		public KeyValuePair<T1, T2>[] Items1{
+			get{
+				lock (m1)
+				return m1.ToArray ();
+			}
+		}
 
 		public void Add(T1 a, T2 b){
 			lock(m1)

@@ -17,7 +17,7 @@ namespace ObjectSerializer
 		ISerializer ser;
 		Type type;
 
-		public  void Serialize(System.IO.Stream stream, object  item)
+		public void Serialize(System.IO.Stream stream, object  item)
 		{
 			var array = (Array)item;
 			ZigZag.Serialize (stream, (uint)array.Length);

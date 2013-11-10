@@ -6,7 +6,9 @@ namespace TestSerializer
 	{
 		public static void Main (string[] args)
 		{
-			new TestSerializers ().Test ();
+			var test = new TestSerializers ();
+			test.Test ();
+			test.TestMessages ();
 		}
 	}
 }

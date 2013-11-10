@@ -13,6 +13,14 @@ namespace ObjectSerializer
 			return !t.IsSealed && !t.IsValueType;
 		}
 
+		public void Add(uint tag, Type type){
+			intMap.Add (tag, type);
+		}
+
+		public KeyValuePair<uint, Type>[] TypeTags{
+			get{ return intMap.Items1; }
+		}
+
 		public uint ToUInt32(Type type){
 			return intMap.Get (type, n => topId++);
 		}
@@ -22,21 +30,12 @@ namespace ObjectSerializer
 		}
 
 		public string ToString(Type type){
-			return map.Get(type, n=>{
-				var assembly = n.Assembly.GetName().Name;
-				return assembly + ":" + n.Name;	
-			});
+			return map.Get (type, n => n.AssemblyQualifiedName);
 		}
 
 		public Type GetType(string name){
 			return map.Get(name, x=>{
-				var split = x.Split(':');
-				var assemblyName = split[0];
-				var typeName = split[1];
-				var t = AppDomain.CurrentDomain.GetAssemblies()
-					.Where(n=>n.GetName().Name == assemblyName)
-					.SelectMany(n=>n.GetTypes())
-					.FirstOrDefault(n=>n.Name == typeName);				
+				var t = Type.GetType(x);
 				if(t == null) throw new Exception("Type not found " + x);
 				return t;
 			});

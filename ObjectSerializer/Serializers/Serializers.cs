@@ -1,25 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Collections;
 using Fasterflect;
+using System.Text;
 
 namespace ObjectSerializer
 {
 	public class Serializers
 	{
-		TypeMap types = new TypeMap();
-		Dictionary<Type, ISerializer> serializers = new Dictionary<Type, ISerializer> ();
-
-		public UnknownTypeSerializer Tagged { get; private set; }
-
-		Serializers Add<T>(ISerializer s){
-			serializers.Add (typeof(T), s);
-			return this;
-		}
-
 		public Serializers(){
+			serializers = new Dictionary<Type, ISerializer> ();
+
 			Add <byte[]>(new ByteArraySerializer ())
 			.Add<string> (new StringSerializer ())
 			.Add <sbyte>(new Int8Serializer ())
@@ -40,6 +34,59 @@ namespace ObjectSerializer
 
 			Tagged = new UnknownTypeSerializer(this, types);
 		}
+
+		public Serializers(Dictionary<Type, ISerializer> map){
+			serializers = map;
+			Tagged = new UnknownTypeSerializer(this, types);
+		}
+
+		public Serializers CopyNoTags(){
+			return new Serializers(serializers);
+		}
+		public Serializers CopyNewTags(IEnumerable<KeyValuePair<uint,Type>> types){
+			var s = new Serializers(serializers);
+			s.Add (types);
+			return s;
+		}
+		public void Add(IEnumerable<KeyValuePair<uint, Type>> types){
+			foreach (var type in types)
+				this.types.Add (type.Key, type.Value);
+		}
+
+		public UnknownTypeSerializer Tagged { get; private set; }
+
+		public void SerializeTypeMap(Stream stream){
+			var tags = types.TypeTags;
+			ZigZag.Serialize (stream, (uint)tags.Length);
+			foreach (var kvp in tags) {
+				ZigZag.Serialize (stream, kvp.Key);
+				var name = types.ToString (kvp.Value);
+				stream.Write (name);
+			}
+		}
+
+		public KeyValuePair<uint,Type>[] DeserializeTypeMap(Stream stream){
+			int count = (int)ZigZag.DeserializeUInt32 (stream);
+			var types = new KeyValuePair<uint,Type>[count];
+			for(int i=0;i<types.Length;i++) {
+				uint tag = ZigZag.DeserializeUInt32 (stream);
+				var typeName = stream.ReadString ();
+				var type = this.types.GetType (typeName);
+				types [i] = new KeyValuePair<uint, Type> (tag, type);
+			}	
+			return types;
+		}
+
+		TypeMap types = new TypeMap();
+		Dictionary<Type, ISerializer> serializers;
+
+
+
+		Serializers Add<T>(ISerializer s){
+			serializers.Add (typeof(T), s);
+			return this;
+		}
+
 
 		public ISerializer FromDeclared(Type t){
 			if (t.IsValueType || t.IsSealed)

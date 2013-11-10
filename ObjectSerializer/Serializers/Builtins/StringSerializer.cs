@@ -23,12 +23,7 @@ namespace ObjectSerializer
 			long count = ZigZag.DeserializeInt64 (stream);
 			if(count == 1) return null;
 			var c = (int)(count >> 1);
-			var bytes = new byte[c];
-			int offset = 0;
-			do {
-				int read = stream.Read (bytes, offset, bytes.Length - offset);
-				offset += read;
-			} while(offset != bytes.Length);
+			var bytes = stream.ReadBytes (c);
 			return Encoding.UTF8.GetString(bytes);
 		}
 	}

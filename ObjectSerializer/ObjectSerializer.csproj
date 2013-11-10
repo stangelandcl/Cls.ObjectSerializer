@@ -78,6 +78,7 @@
     <Compile Include="Types\ZigZag.cs" />
     <Compile Include="Serializers\Collections\ArraySerializer.cs" />
     <Compile Include="Serializers\Collections\DictionarySerializer.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
