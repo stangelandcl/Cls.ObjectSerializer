@@ -96,6 +96,8 @@ namespace ObjectSerializer
 				return serializers [t] = new ClassSerializer (this, t);
 			if (t.IsGenericType && typeof(KeyValuePair<, >) == t.GetGenericTypeDefinition ())
 				return serializers [t] = new KeyValuePairSerializer (this, t);
+			if(t.IsEnum)
+				return serializers[t] = new EnumSerializer(this, t);
 			return serializers [t] = new StructSerializer (this, t);
 		}
 

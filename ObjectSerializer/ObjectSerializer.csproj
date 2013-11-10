@@ -79,6 +79,7 @@
     <Compile Include="Serializers\Collections\DictionarySerializer.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Serializers\TypeMapSerializer.cs" />
+    <Compile Include="Serializers\Objects\EnumSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core" />

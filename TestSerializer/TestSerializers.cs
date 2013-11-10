@@ -43,8 +43,8 @@ namespace TestSerializer
 
 		[Test]
 		public void TestPerformance(){
-			var t = CreateTestItem ();
-			const int count = 10000;
+			var t = CreatePerformanceTestItem ();
+			const int count = 100000;
 			var sw = Stopwatch.StartNew ();
 			for (int i=0; i<count; i++)
 				Encoding.UTF8.GetBytes (JsonConvert.SerializeObject (t));
@@ -113,6 +113,29 @@ namespace TestSerializer
 		struct Test4{
 			public string Value {get;set;}
 			public bool YesNo {get;set;}
+		}
+
+		class Test5{
+			public string Name {get;set;}
+			public int Id {get;set;}
+			public string Prop1 {get;set;}
+			public string Prop2 {get;set;}
+			public int Prop3 {get;set;}
+			public double Prop4 {get;set;}
+			public Test6 Prop5 {get;set;}
+		}
+		enum Test6 { A,B,C,D,E,F};
+
+		static Test5 CreatePerformanceTestItem(){
+			return new Test5{
+				Name = "saotehrcdrgdbrb",
+				Id = 1280256,
+				Prop1 = "asoteuhsantoed",
+				Prop2 = "asoteusbaoebiaobeiao",
+				Prop3 = 812654,
+				Prop4 = 8136508.096086,
+				Prop5 = Test6.D,
+			};
 		}
 
 		static Test1 CreateTestItem ()
