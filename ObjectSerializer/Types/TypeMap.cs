@@ -5,9 +5,9 @@ using System.Linq;
 namespace ObjectSerializer
 {
 	public class TypeMap{
-		TwoWayDictionary<string,Type> map = new TwoWayDictionary<string, Type>();
-		TwoWayDictionary<uint, Type> intMap = new TwoWayDictionary<uint, Type>();
-		uint topId = 1;
+		protected TwoWayDictionary<string,Type> nameMap = new TwoWayDictionary<string, Type>();
+		protected TwoWayDictionary<uint, Type> intMap = new TwoWayDictionary<uint, Type>();
+		protected uint topId = 1;
 
 		public static bool RequiresTag(Type t){
 			return !t.IsSealed && !t.IsValueType;
@@ -15,6 +15,11 @@ namespace ObjectSerializer
 
 		public void Add(uint tag, Type type){
 			intMap.Add (tag, type);
+		}
+
+		public void Add(uint tag, string name, Type type){
+			intMap.Add (tag, type);
+			nameMap.Add (name, type);
 		}
 
 		public KeyValuePair<uint, Type>[] TypeTags{
@@ -29,12 +34,20 @@ namespace ObjectSerializer
 			return intMap.Get (id).Value;
 		}
 
-		public string ToString(Type type){
-			return map.Get (type, n => n.AssemblyQualifiedName);
+		public virtual string ToString(Type type){
+			return nameMap.Get (type, n => GetName(n));
+		}
+
+		string GetName(Type type){
+			var split = type.AssemblyQualifiedName.Split (',');
+			return string.Join (",", split.Where (n => 
+			                                      !n.StartsWith (" Version=") &&
+			                                      !n.StartsWith(" Culture=") &&
+			                                      n != " PublicKeyToken=null"));
 		}
 
 		public Type GetType(string name){
-			return map.Get(name, x=>{
+			return nameMap.Get(name, x=>{
 				var t = Type.GetType(x);
 				if(t == null) throw new Exception("Type not found " + x);
 				return t;

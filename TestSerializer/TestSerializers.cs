@@ -5,6 +5,7 @@ using ObjectSerializer;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Text;
+using System.Linq.Expressions;
 
 namespace TestSerializer
 {
@@ -20,6 +21,8 @@ namespace TestSerializer
 			var bytes = serializer.Serialize(t);
 			var t2 = (Test1)serializer.Deserialize (bytes);
 
+			var method = t2.Expr.Compile ();
+			Assert.AreEqual (11, method (10));
 			Assert.AreEqual (t.Name, t2.Name);
 			Assert.AreEqual (t.Id, t2.Id);
 			CollectionAssert.AreEqual (t.T2.Items, t2.T2.Items);
@@ -80,7 +83,6 @@ namespace TestSerializer
 			for (int i=0; i<count; i++)
 				Serializer.Default.Deserialize(b3);
 			Console.WriteLine (sw.Elapsed + " binary reuse");
-
 		}
 
 		class Test1{
@@ -88,6 +90,7 @@ namespace TestSerializer
 			public string Name { get; set; }
 			public ITest2 T2 {get;set;}
 			public ITest2 T3 {get;set;}
+			public Expression<Func<int,int>> Expr {get;set;}
 		}
 
 		interface ITest2{
@@ -178,6 +181,7 @@ namespace TestSerializer
 						896008607.00009
 					},
 				},
+				Expr = n=> n + 1,
 			};
 			return t;
 		}

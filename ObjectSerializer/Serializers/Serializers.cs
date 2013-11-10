@@ -6,6 +6,8 @@ using System.Linq.Expressions;
 using System.Collections;
 using Fasterflect;
 using System.Text;
+using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace ObjectSerializer
 {
@@ -46,7 +48,7 @@ namespace ObjectSerializer
 		}
 
 		public Serializers CopyNoTags(){
-			return new Serializers(serializers, new TypeMap());
+			return new Serializers(serializers, new MultiTypeMap(TypeMap));
 		}
 		public Serializers CopyNewTags(TypeMap types){
 			return new Serializers(serializers, types);
@@ -85,6 +87,24 @@ namespace ObjectSerializer
 				return GetInternal (t);		
 		}
 
+		public bool IsIgnored(MemberInfo member){
+			return !IsPropertyIncluded(member as PropertyInfo) ||
+				member.GetCustomAttributes (true).Any (n =>			  		  
+					n is NonSerializedAttribute || n is IgnoreDataMemberAttribute);
+		}
+
+		bool IsPropertyIncluded(PropertyInfo p){
+			if(p == null) return true;
+			if (!p.CanRead)	return false;
+			if(!p.CanWrite) return false;
+			if(p.GetGetMethod(false) == null) return false;
+			if(p.GetSetMethod(false) == null) return false;
+			if (typeof(IEnumerable).IsAssignableFrom (p.DeclaringType) && 
+				p.Name == "Item")
+				return false;
+			return true;
+		}
+
 		ISerializer GetInternal (Type t)
 		{
 			ISerializer s;
@@ -99,8 +119,8 @@ namespace ObjectSerializer
 
 			if (t.IsArray)
 				return serializers [t] = new ArraySerializer (this, t);
-			if (IsGenericEnumerable (t)) {
-				if (t.GetGenericTypeDefinition () == typeof(Dictionary<, >))
+			if (typeof(IEnumerable).IsAssignableFrom(t)) {
+				if (t.IsGenericType && t.GetGenericTypeDefinition () == typeof(Dictionary<, >))
 					return serializers [t] = new DictionarySerializer (this, t);
 				return serializers [t] = new EnumerableSerializer (this, t);
 			}
@@ -114,10 +134,6 @@ namespace ObjectSerializer
 			if(t.IsEnum)
 				return serializers[t] = new EnumSerializer(this, t);
 			return serializers [t] = new StructSerializer (this, t);
-		}
-
-		static bool IsGenericEnumerable(Type t){
-			return t.IsGenericType && typeof(IEnumerable).IsAssignableFrom (t);
 		}
 	}
 }

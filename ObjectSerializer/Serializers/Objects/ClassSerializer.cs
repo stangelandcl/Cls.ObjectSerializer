@@ -2,6 +2,7 @@ using System;
 using Fasterflect;
 using System.Reflection;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace ObjectSerializer
 {
@@ -11,12 +12,12 @@ namespace ObjectSerializer
 		{ 
 			this.type = type;
 			var properties = type.Properties (Flags.InstancePublic)
-				.Where (n => n.CanRead && n.CanWrite)
-				.ToArray ();
+				.Where (n => !serializer.IsIgnored(n)).ToArray ();
+
 			this.getters = properties.Select (n => n.DelegateForGetPropertyValue ()).ToArray ();
 			this.setters = properties.Select (n => n.DelegateForSetPropertyValue ()).ToArray ();
 			this.serializers = properties.Select (n => serializer.FromDeclared (n.PropertyType)).ToArray ();
-			newObj = this.type.DelegateForCreateInstance ();
+			this.newObj = this.type.DelegateForCreateInstance ();
 		}
 		Type type;
 		MemberGetter[] getters;
@@ -33,11 +34,16 @@ namespace ObjectSerializer
 		public object Deserialize (System.IO.Stream stream)
 		{
 			var obj = newObj();
-			for (int i=0; i<setters.Length; i++) {
+			DeserializeInto (stream, obj);
+			return obj;
+		}
+
+		public void DeserializeInto (System.IO.Stream stream, object obj)
+		{
+			for (int i = 0; i < setters.Length; i++) {
 				var s = serializers [i].Deserialize (stream);
 				setters [i] (obj, s);
 			}
-			return obj;
 		}
 		#endregion
 	}

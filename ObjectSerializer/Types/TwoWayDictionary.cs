@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ObjectSerializer
 {
-	class TwoWayDictionary<T1, T2>
+	public class TwoWayDictionary<T1, T2>
 	{
 		Dictionary<T1, T2> m1 = new Dictionary<T1, T2>();
 		Dictionary<T2, T1> m2 = new Dictionary<T2, T1>();

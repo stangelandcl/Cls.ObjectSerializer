@@ -79,6 +79,7 @@
     <Compile Include="Serializers\TypeMapSerializer.cs" />
     <Compile Include="Serializers\Objects\EnumSerializer.cs" />
     <Compile Include="Serializers\Objects\ExpressionSerializer.cs" />
+    <Compile Include="Types\MultiTypeMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Core" />
@@ -90,6 +91,7 @@
     <Reference Include="Serialize.Linq">
       <HintPath>..\packages\Serialize.Linq.1.1.4\lib\net40\Serialize.Linq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

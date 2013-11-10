@@ -20,13 +20,11 @@ namespace ObjectSerializer
 			Serializers s;
 			public void Serialize<T> (System.IO.Stream stream, T obj)
 			{
-				var ser = s.Get (typeof(T));
-				ser.Serialize (stream, obj);
+				s.Tagged.Serialize (stream, obj);
 			}
 			public T Deserialize<T> (System.IO.Stream stream)
 			{
-				var ser = s.Get (typeof(T));
-				return (T)ser.Deserialize (stream);
+				return (T)s.Tagged.Deserialize (stream);
 			}
 		}
 

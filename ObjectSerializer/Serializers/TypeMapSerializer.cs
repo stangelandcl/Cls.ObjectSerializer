@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 
 namespace ObjectSerializer
 {
@@ -28,7 +29,7 @@ namespace ObjectSerializer
 				uint tag = ZigZag.DeserializeUInt32 (stream);
 				var typeName = stream.ReadString ();
 				var type = this.typeNames.GetType (typeName);
-				types.Add(tag, type);
+				types.Add(tag, typeName, type);
 			}	
 			return types;
 		}

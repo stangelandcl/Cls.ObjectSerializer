@@ -9,16 +9,13 @@ namespace ObjectSerializer
 	{
 		public StructSerializer (Serializers serializer, Type type)
 	    { 
-			this.type = type;
 			var properties = type.Properties (Flags.InstancePublic)
-				.Where (n => n.CanRead && n.CanWrite)
-					.ToArray ();
+				.Where (n => !serializer.IsIgnored(n)).ToArray ();
 			getters = properties.Select (n => n.DelegateForGetPropertyValue ()).ToArray ();
 			setters = properties.Select (n => n.DelegateForSetPropertyValue ()).ToArray ();
 			this.serializers = properties.Select (n => serializer.FromDeclared (n.PropertyType)).ToArray ();
 			this.newObj = type.DelegateForCreateInstance ();
 		}
-		Type type;
 		MemberGetter[] getters;
 		MemberSetter[] setters;
 		ISerializer[] serializers;
