@@ -36,15 +36,16 @@ namespace ObjectSerializer
             var ms = new MemoryStream(bytes.Array, bytes.Offset, bytes.Count);
             return (T)serializer.Deserialize(ms);
         }
-        public static T Deserialize<T>(this ISerializer serializer, byte[] bytes)
+        public static object Deserialize(this ISerializer serializer, ref ArraySegment<byte> bytes)
         {
-            var ms = new MemoryStream(bytes);
-            return (T)serializer.Deserialize(ms);
+            var ms = new MemoryStream(bytes.Array, bytes.Offset, bytes.Count);
+            return serializer.Deserialize(ms);
         }
-//        public static object Deserialize(this ISerializer serializer, Stream stream)
-//        {
-//            return serializer.Deserialize<object>(stream);
-//        }
+        public static T Deserialize<T>(this ISerializer serializer, byte[] bytes)
+        {            
+            return (T)serializer.Deserialize(new MemoryStream(bytes));
+        }
+
 		public static object Deserialize(this ISerializer serializer, byte[] bytes)
 		{
 			return serializer.Deserialize(new MemoryStream(bytes));

@@ -7,18 +7,31 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSerializer", "TestSeria
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Debug|x86.ActiveCfg = Debug|x86
 		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Debug|x86.Build.0 = Debug|x86
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Release|x86.ActiveCfg = Release|x86
 		{BB86B094-5E90-4084-8038-321CCBC76BFE}.Release|x86.Build.0 = Release|x86
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Debug|x86.ActiveCfg = Debug|x86
 		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Debug|x86.Build.0 = Debug|x86
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Release|x86.ActiveCfg = Release|x86
 		{C66EFAAD-E211-4528-A69C-06E4261104B1}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = TestSerializer\TestSerializer.csproj
