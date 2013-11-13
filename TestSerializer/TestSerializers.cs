@@ -32,6 +32,27 @@ namespace TestSerializer
 		}
 
 		[Test]
+		public void TestConversion(){
+			var s = new Serializer ();
+			var a = new Convert1 { Id = "id", Name = "myname" };
+			var bytes = s.Serialize (a);
+			var b = s.Deserialize<Convert2> (bytes);
+			Assert.AreEqual (a.Id, b.Id);
+			Assert.AreEqual (a.Name, b.Name);
+
+
+		}
+
+		class Convert1{
+			public string Id { get; set; }
+			public string Name { get; set; }
+		}
+		class Convert2{
+			public string Id {get;set;}
+			public string Name { get; set; }
+		}
+
+		[Test]
 		public void TestMessages(){
 			var t = CreateTestItem ();
 
